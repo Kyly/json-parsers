@@ -2,7 +2,7 @@
 
 let _ = require('lodash');
 
-const JsonParseService = {
+const ParseService = {
 
     getElementPath: (obj, element, path, result) => {
         path = path || '';
@@ -10,13 +10,13 @@ const JsonParseService = {
 
         _.forIn(obj, (value, key, object) => {
             if(value == element) {
-                let fullPath = JsonParseService.getPathString(object, path, key);
+                let fullPath = ParseService.getPathString(object, path, key);
                 result.push(fullPath);
                 return false;
             }
 
             if (typeof value === 'object') {
-                JsonParseService.getElementPath(value, element, JsonParseService.getPathString(object, path, key), result);
+                ParseService.getElementPath(value, element, ParseService.getPathString(object, path, key), result);
             }
         });
 
@@ -38,7 +38,7 @@ const JsonParseService = {
             }
 
             if(typeof value === 'object') {
-                result = _.concat(result, JsonParseService.getObjectsContainingKey(value, elementKey));
+                result = _.concat(result, ParseService.getObjectsContainingKey(value, elementKey));
             }
 
             return result;
@@ -57,4 +57,4 @@ const JsonParseService = {
     }
 };
 
-module.exports = JsonParseService;
+module.exports = ParseService;

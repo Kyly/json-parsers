@@ -2,9 +2,9 @@
 let Q = require('q');
 let fs = require('fs');
 
-const JsonFileServce = {
+const FileServce = {
 
-    readJson: path => JsonFileServce.readFile(path).then(JSON.parse),
+    readJson: path => FileServce.readFile(path).then(JSON.parse),
 
     readFile: path => {
         let deferer = Q.defer();
@@ -24,4 +24,4 @@ const JsonFileServce = {
 
 };
 
-module.exports = JsonFileServce;
+module.exports = FileServce;

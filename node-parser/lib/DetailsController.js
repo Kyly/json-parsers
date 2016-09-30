@@ -1,11 +1,11 @@
-const jsonFileService = require('./JsonFileService');
-const jsonParseServcie = require('./JsonParseService');
+const jsonFileService = require('./FileService');
+const jsonParseServcie = require('./ParseService');
 const fs = require('fs');
 const path = require('path');
 const Q = require('q');
 const _ = require('lodash');
 
-class JsonDetailsController {
+class DetailsController {
 
     constructor(dir) {
         this.directory = dir;
@@ -13,23 +13,25 @@ class JsonDetailsController {
 
     swapDetails(src) {
         let mainPath = path.join(this.directory, src);
-        return jsonFileService.readJson(mainPath).then(this.processContent.bind(this));
+        return jsonFileService.readJson(mainPath).then(this.getDetails.bind(this));
     }
 
-    processContent(content) {
+    getDetails(content) {
         let insertObjects = jsonParseServcie.getObjectsContainingKey(content, 'serverInsert');
         let insertFilePromises = this.getFilesToInsert(insertObjects);
+        let swap = _.curry(this.swap)(content)(insertObjects);
 
-        return Q.all(insertFilePromises).then(fileContents => {
-            for (let idx = 0; idx < insertObjects.length; ++idx) {
-                delete insertObjects[idx].serverInsert;
-                Object.assign(insertObjects[idx], fileContents[idx]);
-            }
-
-            return content;
-        });
+        return Q.all(insertFilePromises).then(swap);
     }
 
+    swap(content, insertObjects, insertFileContents) {
+        for (let idx = 0; idx < insertObjects.length; ++idx) {
+            delete insertObjects[idx].serverInsert;
+            Object.assign(insertObjects[idx], insertFileContents[idx]);
+        }
+
+        return content
+    }
 
     getFilesToInsert(insertObjects) {
         return _.map(insertObjects, insertObject => {
@@ -41,4 +43,4 @@ class JsonDetailsController {
 
 }
 
-module.exports = (JsonDetailsController);
+module.exports = (DetailsController);
