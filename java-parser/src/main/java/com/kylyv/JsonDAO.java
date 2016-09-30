@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class ParserService {
+public class JsonDAO {
 
     private JsonNode json;
 
@@ -29,7 +29,7 @@ public class ParserService {
 
     }
 
-    JsonNode findValue(String path, String element, String id) {
+    JsonNode getValue(String path, String element, String id) {
 
         String[] pathArray = path.split("\\.");
         JsonNode items = findItems(pathArray);
